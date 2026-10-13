@@ -12,8 +12,7 @@
 2. **التحميل الأولي الخام (Raw Load):** تحميل جميع السجلات كما وردت إلى مجموعة `orders_raw` دون أي حذف أو تنظيف مسبق لحفظ سجل التتبع التاريخي.
 3. **قواعد الجودة والتنظيف الآلي (Quality Rules):** تطبيق أكثر من 8 قواعد تنظيف وتصحيح ذكية مع الاحتفاظ بسجل الأثر والتدقيق (`corrections audit trail`).
 4. **التصنيف والعزل (Classification & Quarantine):** تصنيف كل سجل إلى `valid` أو `corrected` أو نقله إلى `orders_quarantine` مع أسباب ورموز العزل التفصيلية، مع ضمان اتساق المعادلة:
-   $$\text{run\_raw\_count} = \text{run\_valid\_count} + \text{run\_corrected\_count} + \text{run\_quarantine\_count}$$
-5. **إعادة التشغيل الموثوق (Idempotency & Upsert):** استخدام مفتاح العمل الثابت `order_id` وفهرس فريد `ux_order_id` داخل `orders_validated` والكتابة بأسلوب Upsert لضمان عدم إنشاء أي سجلات مكررة عند إعادة تشغيل نفس الملف.
+`run_raw_count = run_valid_count + run_corrected_count + run_quarantine_count`5. **إعادة التشغيل الموثوق (Idempotency & Upsert):** استخدام مفتاح العمل الثابت `order_id` وفهرس فريد `ux_order_id` داخل `orders_validated` والكتابة بأسلوب Upsert لضمان عدم إنشاء أي سجلات مكررة عند إعادة تشغيل نفس الملف.
 6. **الاستعلامات والفهارس (Queries, Indexes & Explain):** 5 استعلامات عملية تخدمها 3 فهارس (منها فهرس مركب Compound Index) مع تحليل خطط التنفيذ قبل وبعد عبر `explain("executionStats")`.
 7. **التقارير والتجميعات (Aggregations):** 5 تقارير تحليلية تنفيذية تخدم الأعمال (المبيعات بالمدينة، أفضل المنتجات، كبار العملاء، المبيعات بالفترة، وتوزيع الحالات).
 8. **العروض المادية التزايدية (Materialized Views):** تحديث تزايدي ذكي لـ `daily_sales_summary` و `top_products_summary` عبر علامة مائية (`watermark`) وعمليات `$inc` دون إعادة بناء البيانات من البداية.
